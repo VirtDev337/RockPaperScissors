@@ -1,14 +1,65 @@
+const CHOICES = ["rock", "paper", "scissors"];
 // Computer returns a random of RPS
 function getComputerChoice() {
-    const CHOICES = ["Rock", "Paper", "Scissors"];
     let choice = Math.floor(Math.random() * CHOICES.length);
     return CHOICES[choice];
 }
 // Player selection of RPS
 function playerSelection() {
-    let choice = prompt("Please enter your choice: \n Rock, Paper or Scissors");
+    let choice = prompt("Please enter your choice: \n Rock, Paper or Scissors").toLowerCase();
+    console.log(choice)
+    
+    while (!CHOICES.includes(choice)) {
+        choice = prompt("Please only enter 'Rock', 'Paper' or 'Scissors': ");
+        choice = choice.toLowerCase();
+    };
+    
+    return choice;
 }
 
+function playRound(compChoice, playerChoice) { 
+    let result = null;
+    
+    if (compChoice == playerChoice) {
+        result = "Tie";
+    } else if (compChoice == "rock") {
+        result = playerChoice == "paper" ? "You Win!  Paper beats Rock." : "You Lose.  Rock beats Scissors.";
+    } else if (compChoice == "scissors") {
+        result = playerChoice == "rock" ? "You Win!  Rock beats Scissors." : "You Lose.  Scissors beats Paper.";
+    } else if (compChoice == "paper") {
+        result = playerChoice == "scissors" ? "You Win!  Scissors beats Paper." : "You Lose.  Paper beats Rock.";
+    }
+
+    console.log(result);
+    alert(result);
+    return result;
+}
+
+function game() {
+    let count = 5;
+    let score = {
+        "computer": 0,
+        "player": 0
+    };
+    
+    for (let i = 0; i < count + 1; i++) {
+        let result = playRound(getComputerChoice(), playerSelection());
+        let winner = result == "Tie" ? "tie" :  result.includes("Win") ? "player" : "computer";
+        console.log(winner);
+        
+        if (winner != "tie") {
+            score[winner]++;
+        } else {
+            count++;
+        }
+        console.log(score);
+    }
+    
+    console.log(score);
+    let winner = score["computer"] == score["player"]? "Tie" : score["computer"] > score["player"] ? "computer" : "player";
+    let msg = winner == "Tie" ? "You Tied! Wait, this isn't supposed to happen!?" : `The Winner is ${winner}!`;
+    alert(msg);
+}
 
 // Tests
 function testGetComputerChoice() {
@@ -19,4 +70,9 @@ function testGetComputerChoice() {
         console.log(`Debugging: Looping`);
         run--;
     }
+}
+
+function testPlayRound() {
+    let result = playRound(getComputerChoice(), playerSelection());
+    alert(result)
 }
