@@ -18,8 +18,9 @@ function playerSelection() {
 }
 
 function playRound(compChoice, playerChoice) { 
+    // Play a round of RPS, returning the winner
     let result = null;
-    
+    // Evaluate the choices and see who won
     if (compChoice == playerChoice) {
         result = "Tie";
     } else if (compChoice == "rock") {
@@ -41,7 +42,7 @@ function game() {
         "computer": 0,
         "player": 0
     };
-    
+    // Use the loop to iterate through five games and return the winner, if there is one
     for (let i = 0; i < count + 1; i++) {
         let result = playRound(getComputerChoice(), playerSelection());
         let winner = result == "Tie" ? "tie" :  result.includes("Win") ? "player" : "computer";
@@ -56,7 +57,9 @@ function game() {
     }
     
     console.log(score);
+    // Depending on the score, determine the winner
     let winner = score["computer"] == score["player"]? "Tie" : score["computer"] > score["player"] ? "computer" : "player";
+    // Based on the winner, set the message to display
     let msg = winner == "Tie" ? "You Tied! Wait, this isn't supposed to happen!?" : `The Winner is ${winner}!`;
     alert(msg);
 }
