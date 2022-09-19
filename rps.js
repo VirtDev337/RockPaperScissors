@@ -30,8 +30,7 @@ function playRound(compChoice, playerChoice) {
     } else if (compChoice == "paper") {
         result = playerChoice == "scissors" ? "You Win!  Scissors beats Paper." : "You Lose.  Paper beats Rock.";
     }
-
-    console.log(result);
+    
     alert(result);
     return result;
 }
@@ -53,7 +52,7 @@ function game() {
         } else {
             count++;
         }
-        console.log(score);
+        // console.log(score);
     }
     
     console.log(score);
@@ -61,6 +60,7 @@ function game() {
     let winner = score["computer"] == score["player"]? "Tie" : score["computer"] > score["player"] ? "computer" : "player";
     // Based on the winner, set the message to display
     let msg = winner == "Tie" ? "You Tied! Wait, this isn't supposed to happen!?" : `The Winner is ${winner}!`;
+    console.log(msg);
     alert(msg);
 }
 
@@ -78,4 +78,18 @@ function testGetComputerChoice() {
 function testPlayRound() {
     let result = playRound(getComputerChoice(), playerSelection());
     alert(result)
+}
+
+function consoleDisplay() {
+    var realConsoleLog = console.log;
+    var conMessages = [];  
+    console.log = function () {
+            let regex = /,/g;
+            var message = [].join.call(arguments, " ");
+            conMessages.push(message)
+            message = conMessages.join("\n");
+            $(".output").text(message);
+            realConsoleLog.apply(console, arguments);
+        };
+        console.log("Display console working.\n");
 }
