@@ -36,6 +36,7 @@ function playRound(compChoice, playerChoice) {
 }
 
 function game() {
+    consoleDisplay();
     let count = 5;
     let score = {
         "computer": 0,
@@ -82,14 +83,14 @@ function testPlayRound() {
 
 function consoleDisplay() {
     var realConsoleLog = console.log;
+    let div = document.querySelector(".output");
     var conMessages = [];  
     console.log = function () {
-            let regex = /,/g;
-            var message = [].join.call(arguments, " ");
-            conMessages.push(message)
-            message = conMessages.join("\n");
-            $(".output").text(message);
-            realConsoleLog.apply(console, arguments);
-        };
-        console.log("Display console working.\n");
+        var message = [].join.call(arguments, "\n");
+        conMessages.push(message); 
+        message = conMessages.join("\n");
+        div.value = message;
+        realConsoleLog.apply(console, arguments);
+    };
+    console.log("Display console working.\n");
 }
