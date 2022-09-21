@@ -1,13 +1,20 @@
 const CHOICES = ["rock", "paper", "scissors"];
+const WINNERMAP = {
+    "rock": "paper",
+    "scissors": "rock",
+    "paper": "scissors"
+}
+
 // Computer returns a random of RPS
 function getComputerChoice() {
     let choice = Math.floor(Math.random() * CHOICES.length);
     return CHOICES[choice];
 }
+
 // Player selection of RPS
 function playerSelection() {
     let choice = prompt("Please enter your choice: \n Rock, Paper or Scissors").toLowerCase();
-    console.log(choice)
+    console.log(choice);
     
     while (!CHOICES.includes(choice)) {
         choice = prompt("Please only enter 'Rock', 'Paper' or 'Scissors': ");
@@ -21,18 +28,25 @@ function playRound(compChoice, playerChoice) {
     // Play a round of RPS, returning the winner
     let result = null;
     // Evaluate the choices and see who won
+    
     if (compChoice == playerChoice) {
         result = "Tie";
-    } else if (compChoice == "rock") {
-        result = playerChoice == "paper" ? "You Win!  Paper beats Rock." : "You Lose.  Rock beats Scissors.";
-    } else if (compChoice == "scissors") {
-        result = playerChoice == "rock" ? "You Win!  Rock beats Scissors." : "You Lose.  Scissors beats Paper.";
-    } else if (compChoice == "paper") {
-        result = playerChoice == "scissors" ? "You Win!  Scissors beats Paper." : "You Lose.  Paper beats Rock.";
+    } else {
+        result = compareChoices(playerChoice, compChoice);
     }
     
     alert(result);
-    return result;
+}
+
+function compareChoices(pChoice, cChoice) {
+    return announceWinner(pChoice, cChoice, WINNERMAP[cChoice] == pChoice);
+}
+
+function announceWinner(pChoice, cChoice, isWinner) {
+    if (isWinner) { 
+        return `You Win!  ${pChoice} beats ${cChoice}.`;
+    } 
+    return `You Lose.  ${cChoice} beats ${pChoice}.`;
 }
 
 function game() {
@@ -48,10 +62,10 @@ function game() {
         let winner = result == "Tie" ? "tie" :  result.includes("Win") ? "player" : "computer";
         console.log(winner);
         
-        if (winner != "tie") {
-            score[winner]++;
-        } else {
+        if (winner == "tie") {
             count++;
+        } else {
+            score[winner]++;
         }
         // console.log(score);
     }
