@@ -4,19 +4,12 @@ const WINNERMAP = {
     "scissors": "rock",
     "paper": "scissors"
 }
-let count = 5;
-let score = {
-    "computer": 0,
-    "player": 0
-};
-
 
 // Computer returns a random of RPS
 function getComputerChoice() {
     let choice = Math.floor(Math.random() * CHOICES.length);
     return CHOICES[choice];
 }
-
 
 // Player selection of RPS
 function playerSelection() {
@@ -31,23 +24,6 @@ function playerSelection() {
     return choice;
 }
 
-
-// Announce the winner
-function announceWinner(pChoice, cChoice, isWinner) {
-    if (isWinner) { 
-        return `You Win!  ${pChoice} beats ${cChoice}.`;
-    } 
-    return `You Lose.  ${cChoice} beats ${pChoice}.`;
-}
-
-
-// Evaluate the choices
-function compareChoices(pChoice, cChoice) {
-    return announceWinner(pChoice, cChoice, WINNERMAP[cChoice] == pChoice);
-}
-
-
-// Play a round of RPS
 function playRound(compChoice, playerChoice) { 
     // Play a round of RPS, returning the winner
     let result = null;
@@ -55,71 +31,58 @@ function playRound(compChoice, playerChoice) {
     
     if (compChoice == playerChoice) {
         result = "Tie";
-        return result;
+    } else {
+        result = compareChoices(playerChoice, compChoice);
     }
     
-    result = compareChoices(playerChoice, compChoice);
-    return result;
+    alert(result);
 }
 
-
-function whoWon(outcome) {
-    return outcome.includes("Tie") ? "tie" : outcome.includes("Win") ? "player" : "computer";
+function compareChoices(pChoice, cChoice) {
+    return announceWinner(pChoice, cChoice, WINNERMAP[cChoice] == pChoice);
 }
 
-
-function gameWinnerMsg(gameScore) {
-    let winner = gameScore["computer"] == gameScore["player"]? "Tie" : gameScore["computer"] > gameScore["player"] ? "computer" : "player";
-    // Based on the winner, set the message to display
-    return winner == "Tie" ? "You Tied! Wait, this isn't supposed to happen!?" : `The Winner is ${winner}!`;
+function announceWinner(pChoice, cChoice, isWinner) {
+    if (isWinner) { 
+        return `You Win!  ${pChoice} beats ${cChoice}.`;
+    } 
+    return `You Lose.  ${cChoice} beats ${pChoice}.`;
 }
 
-
-// Mirror the console output in the html
-function consoleDisplay() {
-    var realConsoleLog = console.log;
-    let div = document.querySelector(".output");
-    var conMessages = [];
-    div.value = "";
-    
-    console.log = function () {
-        var message = [].join.call(arguments, "\n");
-        conMessages.push(message); 
-        message = conMessages.join("\n");
-        div.value = message;
-        realConsoleLog.apply(console, arguments);
-    };
-    
-    console.log("Welcome to Rock, Paper, Scissors.\n");
-}
-
-
-// A full game is five rounds
 function game() {
     consoleDisplay();
-    
+    let count = 5;
+    let score = {
+        "computer": 0,
+        "player": 0
+    };
     // Use the loop to iterate through five games and return the winner, if there is one
     for (let i = 0; i < count + 1; i++) {
-        let roundWinner = playRound(getComputerChoice(), playerSelection());
-        alert(roundWinner);
-        let winner = whoWon(roundWinner);
+        let result = playRound(getComputerChoice(), playerSelection());
+        let winner = result == "Tie" ? "tie" :  result.includes("Win") ? "player" : "computer";
         console.log(winner);
-        score[winner]++;
+        
+        if (winner == "tie") {
+            count++;
+        } else {
+            score[winner]++;
+        }
+        // console.log(score);
     }
     
+    console.log(score);
     // Depending on the score, determine the winner
-    let msg = gameWinnerMsg(score);
+    let winner = score["computer"] == score["player"]? "Tie" : score["computer"] > score["player"] ? "computer" : "player";
+    // Based on the winner, set the message to display
+    let msg = winner == "Tie" ? "You Tied! Wait, this isn't supposed to happen!?" : `The Winner is ${winner}!`;
     console.log(msg);
     alert(msg);
 }
 
-
-
-
 // Tests
 function testGetComputerChoice() {
     let run = 15;
-    
+
     while(run != 0) {
         console.log(getComputerChoice());
         console.log(`Debugging: Looping`);
@@ -130,4 +93,18 @@ function testGetComputerChoice() {
 function testPlayRound() {
     let result = playRound(getComputerChoice(), playerSelection());
     alert(result)
+}
+
+function consoleDisplay() {
+    var realConsoleLog = console.log;
+    let div = document.querySelector(".output");
+    var conMessages = [];  
+    console.log = function () {
+        var message = [].join.call(arguments, "\n");
+        conMessages.push(message); 
+        message = conMessages.join("\n");
+        div.value = message;
+        realConsoleLog.apply(console, arguments);
+    };
+    console.log("Display console working.\n");
 }
