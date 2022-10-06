@@ -8,3 +8,8 @@
     text-align: center;
     editable: none;
 }
+
+.choice {
+    display: flex;
+    gap: 0.5rem;
+}
