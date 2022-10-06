@@ -121,8 +121,25 @@ function consoleDisplay() {
 }
 
 
+function compareChoices(pChoice, cChoice) {
+    return announceWinner(pChoice, cChoice, WINNERMAP[cChoice] == pChoice);
+}
+
+function announceWinner(pChoice, cChoice, isWinner) {
+    if (isWinner) { 
+        return `You Win!  ${pChoice} beats ${cChoice}.`;
+    } 
+    return `You Lose.  ${cChoice} beats ${pChoice}.`;
+}
+
+
 function game() {
     consoleDisplay();
+    let count = 5;
+    let score = {
+        "computer": 0,
+        "player": 0
+    };
     
     // Use the loop to iterate through five games and return the winner, if there is one
     for (let i = 0; i < count; i++) {
