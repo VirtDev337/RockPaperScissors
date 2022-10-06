@@ -130,6 +130,18 @@ function consoleDisplay() {
 }
 
 
+function compareChoices(pChoice, cChoice) {
+    return announceWinner(pChoice, cChoice, WINNERMAP[cChoice] == pChoice);
+}
+
+function announceWinner(pChoice, cChoice, isWinner) {
+    if (isWinner) { 
+        return `You Win!  ${pChoice} beats ${cChoice}.`;
+    } 
+    return `You Lose.  ${cChoice} beats ${pChoice}.`;
+}
+
+
 function game() {
     consoleDisplay();
     
