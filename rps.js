@@ -3,13 +3,20 @@ const WINNERMAP = {
     "rock": "paper",
     "scissors": "rock",
     "paper": "scissors"
-}
+};
+let count = 5;
+let score = {
+    "computer": 0,
+    "player": 0
+};
+
 
 // Computer returns a random of RPS
 function getComputerChoice() {
     let choice = Math.floor(Math.random() * CHOICES.length);
     return CHOICES[choice];
 }
+
 
 // Player selection of RPS
 function playerSelection() {
@@ -24,19 +31,95 @@ function playerSelection() {
     return choice;
 }
 
+
+function announceWinner(isWinner) {
+    if (isWinner) { 
+        return `You Win!`;
+    } 
+    return `You Lose.`;
+}
+
+
+function capitalize(word) {
+    let capitalLetter = "";
+    capitalLetter = word[0].toUpperCase();
+    word = word.slice(1,);
+    return capitalLetter + word;
+}
+
+
+function announceHowWon(selections) {
+    return ` ${capitalize(selections[0])} beats ${capitalize(selections[1])}`;
+}
+
+
+function compareChoices(pChoice, cChoice) {
+    return WINNERMAP[cChoice] == pChoice;
+}
+
+
+// Call whoWon with playRound
+function whoWon(outcome) {
+    return outcome ? 
+            "player" : 
+            "computer";
+}
+
+
+// Play a round of RPS
 function playRound(compChoice, playerChoice) { 
     // Play a round of RPS, returning the winner
+    let roundWinner = null;
+    let message = "";
     let result = null;
-    // Evaluate the choices and see who won
+    let choices = null;
     
     if (compChoice == playerChoice) {
-        result = "Tie";
+        result = "tie";
+        message = capitalize(result);
     } else {
         result = compareChoices(playerChoice, compChoice);
+        message = announceWinner(result);
+        roundWinner = whoWon(result);
+        choices = roundWinner == "player" ? 
+                    [playerChoice, compChoice] : 
+                    [compChoice, playerChoice];
+        message += announceHowWon(choices);
     }
     
-    alert(result);
+    console.log(message);
+    alert(message);
+    return roundWinner != null ? roundWinner : message;
+} 
+
+
+function gameWinnerMsg(gameScore) {
+    let winner = gameScore["computer"] == gameScore["player"]? 
+        "Tie" : 
+        gameScore["computer"] > gameScore["player"] ? 
+            "computer" : 
+            "player";
+    // Based on the winner, set the message to display
+    return winner == "Tie" ? 
+            "You Tied! Wait, this isn't supposed to happen!?" : 
+            `The Winner is ${winner}!`;
 }
+
+
+function consoleDisplay() {
+    var realConsoleLog = console.log;
+    let div = document.querySelector(".output");
+    var conMessages = [];  
+    console.log = function () {
+        var message = [].join.call(arguments, "\n");
+        conMessages.push(message); 
+        message = conMessages.join("\n");
+        div.value = message;
+        realConsoleLog.apply(console, arguments);
+    };
+    console.log("Welcome to Rock, Paper, Scissors.\n");
+}
+
 
 function compareChoices(pChoice, cChoice) {
     return announceWinner(pChoice, cChoice, WINNERMAP[cChoice] == pChoice);
@@ -49,6 +132,7 @@ function announceWinner(pChoice, cChoice, isWinner) {
     return `You Lose.  ${cChoice} beats ${pChoice}.`;
 }
 
+
 function game() {
     consoleDisplay();
     let count = 5;
@@ -56,28 +140,37 @@ function game() {
         "computer": 0,
         "player": 0
     };
+    
     // Use the loop to iterate through five games and return the winner, if there is one
-    for (let i = 0; i < count + 1; i++) {
-        let result = playRound(getComputerChoice(), playerSelection());
-        let winner = result == "Tie" ? "tie" :  result.includes("Win") ? "player" : "computer";
+    for (let i = 0; i < count; i++) {
+        let compSelection = getComputerChoice();
+        let playerChoice = playerSelection();
+        console.log(`Computer choice: ${compSelection}`);
+        console.log(`Player choice: ${playerChoice}`);
+        let roundResult = playRound(compSelection, playerChoice);
+        let winner = roundResult == "Tie" ? 
+                                "tie" :  
+                                roundResult;
         console.log(winner);
         
-        if (winner == "tie") {
-            count++;
-        } else {
+        if (winner != "tie") {
             score[winner]++;
         }
-        // console.log(score);
+        console.log(score);
+        
     }
     
     console.log(score);
-    // Depending on the score, determine the winner
-    let winner = score["computer"] == score["player"]? "Tie" : score["computer"] > score["player"] ? "computer" : "player";
-    // Based on the winner, set the message to display
-    let msg = winner == "Tie" ? "You Tied! Wait, this isn't supposed to happen!?" : `The Winner is ${winner}!`;
+    let msg = gameWinnerMsg(score);
     console.log(msg);
     alert(msg);
 }
+
+
+
+
+
+
 
 // Tests
 function testGetComputerChoice() {
@@ -93,18 +186,4 @@ function testGetComputerChoice() {
 function testPlayRound() {
     let result = playRound(getComputerChoice(), playerSelection());
     alert(result)
-}
-
-function consoleDisplay() {
-    var realConsoleLog = console.log;
-    let div = document.querySelector(".output");
-    var conMessages = [];  
-    console.log = function () {
-        var message = [].join.call(arguments, "\n");
-        conMessages.push(message); 
-        message = conMessages.join("\n");
-        div.value = message;
-        realConsoleLog.apply(console, arguments);
-    };
-    console.log("Display console working.\n");
 }
