@@ -4,8 +4,9 @@ const WINNERMAP = {
     "scissors": "rock",
     "paper": "scissors"
 };
+
 let count = 5;
-let score = {
+const SCORE = {
     "computer": 0,
     "player": 0
 };
@@ -19,24 +20,22 @@ function getComputerChoice() {
 
 
 // Player selection of RPS
-function playerSelection() {
-    let choice = prompt("Please enter your choice: \n Rock, Paper or Scissors").toLowerCase();
-    console.log(choice);
+function playerSelection(obj) {
+    // let choice = prompt("Please enter your choice: \n Rock, Paper or Scissors").toLowerCase();
+    console.log(obj.data);
     
-    while (!CHOICES.includes(choice)) {
-        choice = prompt("Please only enter 'Rock', 'Paper' or 'Scissors': ");
-        choice = choice.toLowerCase();
-    };
+    // while (!CHOICES.includes(choice)) {
+    //     choice = prompt("Please only enter 'Rock', 'Paper' or 'Scissors': ");
+    //     choice = choice.toLowerCase();
+    // };
     
-    return choice;
+    return obj.data;
 }
 
 
-function announceWinner(isWinner) {
-    if (isWinner) { 
-        return `You Win!`;
-    } 
-    return `You Lose.`;
+function buttonListener() { 
+    const btns = document.querySelectorAll( ".choice" );
+    btns.forEach( btn => btn.addEventListener("click", playerSelection));
 }
 
 
@@ -45,6 +44,14 @@ function capitalize(word) {
     capitalLetter = word[0].toUpperCase();
     word = word.slice(1,);
     return capitalLetter + word;
+}
+
+
+function announceWinner(isWinner) {
+    if (isWinner) { 
+        return `You Win!`;
+    } 
+    return `You Lose.`;
 }
 
 
@@ -68,23 +75,22 @@ function whoWon(outcome) {
 
 // Play a round of RPS
 function playRound(compChoice, playerChoice) { 
-    // Play a round of RPS, returning the winner
+    // Play a round of RPS, returning the winner or message
     let roundWinner = null;
     let message = "";
-    let result = null;
-    let choices = null;
+    let result = "tie";
     
     if (compChoice == playerChoice) {
-        result = "tie";
         message = capitalize(result);
     } else {
         result = compareChoices(playerChoice, compChoice);
         message = announceWinner(result);
         roundWinner = whoWon(result);
-        choices = roundWinner == "player" ? 
-                    [playerChoice, compChoice] : 
-                    [compChoice, playerChoice];
-        message += announceHowWon(choices);
+        message += announceHowWon(
+                    (roundWinner == "player") ? 
+                        [playerChoice, compChoice] : 
+                        [compChoice, playerChoice]
+                    );
     }
     
     console.log(message);
@@ -94,12 +100,13 @@ function playRound(compChoice, playerChoice) {
 
 
 function gameWinnerMsg(gameScore) {
-    let winner = gameScore["computer"] == gameScore["player"]? 
-        "Tie" : 
-        gameScore["computer"] > gameScore["player"] ? 
-            "computer" : 
-            "player";
     // Based on the winner, set the message to display
+    let winner = gameScore["computer"] == gameScore["player"]? 
+                    "Tie" : 
+                    gameScore["computer"] > gameScore["player"] ? 
+                        "computer" : 
+                        "player";
+    
     return winner == "Tie" ? 
             "You Tied! Wait, this isn't supposed to happen!?" : 
             `The Winner is ${winner}!`;
@@ -110,6 +117,7 @@ function consoleDisplay() {
     var realConsoleLog = console.log;
     let div = document.querySelector(".output");
     var conMessages = [];  
+    
     console.log = function () {
         var message = [].join.call(arguments, "\n");
         conMessages.push(message); 
@@ -117,6 +125,7 @@ function consoleDisplay() {
         div.value = message;
         realConsoleLog.apply(console, arguments);
     };
+    
     console.log("Welcome to Rock, Paper, Scissors.\n");
 }
 
@@ -135,33 +144,26 @@ function announceWinner(pChoice, cChoice, isWinner) {
 
 function game() {
     consoleDisplay();
-    let count = 5;
-    let score = {
-        "computer": 0,
-        "player": 0
-    };
     
     // Use the loop to iterate through five games and return the winner, if there is one
     for (let i = 0; i < count; i++) {
         let compSelection = getComputerChoice();
-        let playerChoice = playerSelection();
-        console.log(`Computer choice: ${compSelection}`);
-        console.log(`Player choice: ${playerChoice}`);
+        let playerChoice = buttonListener();
         let roundResult = playRound(compSelection, playerChoice);
         let winner = roundResult == "Tie" ? 
-                                "tie" :  
-                                roundResult;
+                        "tie" :  
+                        roundResult;
+        
+        console.log(`Computer choice: ${compSelection}`);
+        console.log(`Player choice: ${playerChoice}`);
         console.log(winner);
         
         if (winner != "tie") {
-            score[winner]++;
+            SCORE[winner]++;
         }
-        console.log(score);
-        
     }
     
-    console.log(score);
-    let msg = gameWinnerMsg(score);
+    let msg = gameWinnerMsg(SCORE);
     console.log(msg);
     alert(msg);
 }
@@ -171,11 +173,10 @@ function game() {
 
 
 
-
 // Tests
 function testGetComputerChoice() {
     let run = 15;
-
+    
     while(run != 0) {
         console.log(getComputerChoice());
         console.log(`Debugging: Looping`);
@@ -183,7 +184,8 @@ function testGetComputerChoice() {
     }
 }
 
+
 function testPlayRound() {
-    let result = playRound(getComputerChoice(), playerSelection());
+    let result = playRound(getComputerChoice(), buttonListener());
     alert(result)
 }
